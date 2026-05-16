@@ -29,16 +29,13 @@ void limparBufferEntrada() {
 int main() {
     struct Territorio *mapa;
     struct Ataque *ataques;
-    srand(time(NULL));
-    int dado = rand();
-    int limitado = rand() % 6;
-    struct Territorio mapa[MAX_TERRITORIOS];
+
     int totalTerritorios = 0;
     int totalAtaques = 0;
     int opcao;
-    int numatacante = 0;
-    int numdefensor = 0;
-    int Resultado;
+
+    srand(time(NULL));
+    
 
     mapa = (struct Territorio *) calloc(MAX_TERRITORIOS, sizeof(struct Territorio));
 
@@ -84,13 +81,11 @@ int main() {
                 
                 totalTerritorios++;
 
-                printf("\nTerritório cadastrado com sucesso\n");
-            }else {
+                printf("Território cadastrado com sucesso\n");
+            } else {
                     printf("Mapa cheio!Não foi possível cadastrar mais territórios\n");
             }
 
-            printf("\nPressione Enter para continuar");
-            getchar();
             break;
 
              case 2:
@@ -105,47 +100,99 @@ int main() {
                     printf("Nome: %s\n", mapa[i].nome);
                     printf("Cor: %s\n", mapa[i].cor);
                     printf("Tropa: %d\n", mapa[i].tropa);
+                    printf("====================\n");
                 }
-                printf("====================\n");
+                
             }
 
-            printf("\nPressione Enter para continuar");
-            getchar();
             break;
+            
+            case 3: {
+            if(totalTerritorios < 2) {
+                printf("É necessário pelo menos 2 territórios\n");
+                break;
+            }
 
-             printf("--- Fase de Ataque ---");
-            printf("Escolha o território atacante(1 a 6):");
-            printf("numatacante %d\n", numatacante);
+            int atacante, defensor;
 
+            printf("--- Fase de Ataque ---\n");
+            for(int i = 0; i < totalTerritorios; i++) {
+                printf("%d - %s(%d tropas)\n",
+                    i,
+                    mapa[i].nome,
+                    mapa[i].tropa);
+            }
 
-            case 3:
-            printf("Número aleatório: %d\n", dado);
-            printf("Número entre 1 e 6: %d\n", limitado);
-            if(Resultado = numatacante > numdefensor){
-            printf("Vitória do atacante e defensor perdeu uma tropa");
-        } else{
-            printf("Vitória do defensor"); 
+            printf("Escolha o território atacante: \n");
+            scanf("%d", &atacante);
+
+            printf("Escolha o Território defensor: \n");
+            scanf("%d", &defensor);
+
+            limparBufferEntrada();
+
+            if(atacante == defensor ||
+               atacante < 0 || atacante >= totalTerritorios ||
+               defensor < 0 || defensor >= totalTerritorios) {
+               printf("Ataque inválido\n");
+               break;
+            }
+
+            int dadoAtacante = rand() % 6 + 1;
+            int dadoDefensor = rand() % 6 + 1;
+
+            printf("Dado atacante: %d\n", dadoAtacante);
+            printf("Dado defensor: %d\n", dadoDefensor);
+
+            if(dadoAtacante > dadoDefensor) {
+                mapa[defensor].tropa--;
+                printf("Vitória do atacante!\n");
+                printf("%s perdeu 1 tropa\n", mapa[defensor].nome);
+            } else {
+                mapa[atacante].tropa--;
+                printf("Vitória do defensor!\n");
+                printf("%s perdeu 1 tropa\n", mapa[atacante].nome);
+            }
+
+            strcpy(ataques[totalAtaques].nomeAtacante, mapa[atacante].nome);
+            strcpy(ataques[totalAtaques].nomeDefensor, mapa[defensor].nome);
+
+            ataques[totalAtaques].indiceAtacante = atacante;
+            ataques[totalAtaques].indiceDefensor = defensor;
+
+            totalAtaques++;
+
+            break;
+        }
+
+        case 4:
+        if(totalAtaques == 0) {
+            printf("Nenhum ataque registrado\n");
+        } else {
+            printf("--- Lista de Ataques ---\n");
+
+            for(int i = 0; i < totalAtaques; i++) {
+                printf("Ataque %d\n", i + 1);
+                printf("Atacante: %s\n", ataques[i].nomeAtacante);
+                printf("Defensor: %s\n", ataques[i].nomeDefensor);
+            }
         }
         
-        printf("\nPressione Enter para continuar");
-        getchar();
         break;
 
             case 0:
-            printf("\nSaindo do sistema...\n");
+            printf("Saindo do sistema...\n");
             break;
 
             default:
-            printf("\nOpção inválida.Tente novamente\n");
-            printf("\nPressione Enter para continuar\n");
-            getchar();
-            break;
-          
-        }while(opcao != 0);
+            printf("Opção inválida.Tente novamente\n");
+            }
+            
+        } while(opcao != 0);
         
-    
     free(mapa);
     free(ataques);
+
     printf("Memória liberada com sucesso!\n");
 
     return 0;
