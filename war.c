@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
-#define MAX_TERRITORIOS 5
+#define MAX_TERRITORIOS 10
+#define MAX_ATAQUES 50
 #define TAM_STRING 50
 
 
@@ -12,15 +14,40 @@ struct Territorio {
     int tropa;
 };
 
+struct Ataque {
+    int indiceAtacante;
+    char nomeAtacante[TAM_STRING];
+    int indiceDefensor;
+    char nomeDefensor[TAM_STRING];
+};
+
 void limparBufferEntrada() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
 int main() {
+    struct Territorio *mapa;
+    struct Ataque *ataques;
+    srand(time(NULL));
+    int dado = rand();
+    int limitado = rand() % 6;
     struct Territorio mapa[MAX_TERRITORIOS];
     int totalTerritorios = 0;
+    int totalAtaques = 0;
     int opcao;
+    int numatacante = 0;
+    int numdefensor = 0;
+    int Resultado;
+
+    mapa = (struct Territorio *) calloc(MAX_TERRITORIOS, sizeof(struct Territorio));
+
+    ataques = (struct Ataque *) malloc(MAX_ATAQUES *  sizeof(struct Ataque));
+
+    if (mapa == NULL || ataques == NULL) {
+        printf("Erro: Falha ao alocar memória\n");
+        return 1;
+    }
 
     do {
         printf("=====================\n");
@@ -28,6 +55,8 @@ int main() {
         printf("=====================\n");
         printf("1-cadastrar novo território\n");
         printf("2-listar todos os territórios\n");
+        printf("3-realizar ataque\n");
+        printf("4-listar todos os ataques\n");
         printf("0-sair\n");
         printf("=====================\n");
         printf("Escolha uma opção:");
@@ -64,7 +93,7 @@ int main() {
             getchar();
             break;
 
-            case 2:
+             case 2:
             printf("--- Lista de territórios cadastrados ---\n\n");
 
             if (totalTerritorios == 0) {
@@ -72,7 +101,7 @@ int main() {
             } else {
                 for (int i = 0; i < totalTerritorios; i++) {
                     printf("==================\n");
-                    printf("TERRITÒRIO %d\n", i + 1);
+                    printf("TERRITÓRIO %d\n", i + 1);
                     printf("Nome: %s\n", mapa[i].nome);
                     printf("Cor: %s\n", mapa[i].cor);
                     printf("Tropa: %d\n", mapa[i].tropa);
@@ -84,6 +113,24 @@ int main() {
             getchar();
             break;
 
+             printf("--- Fase de Ataque ---");
+            printf("Escolha o território atacante(1 a 6):");
+            printf("numatacante %d\n", numatacante);
+
+
+            case 3:
+            printf("Número aleatório: %d\n", dado);
+            printf("Número entre 1 e 6: %d\n", limitado);
+            if(Resultado = numatacante > numdefensor){
+            printf("Vitória do atacante e defensor perdeu uma tropa");
+        } else{
+            printf("Vitória do defensor"); 
+        }
+        
+        printf("\nPressione Enter para continuar");
+        getchar();
+        break;
+
             case 0:
             printf("\nSaindo do sistema...\n");
             break;
@@ -93,14 +140,14 @@ int main() {
             printf("\nPressione Enter para continuar\n");
             getchar();
             break;
-        }
-
-    } while (opcao != 0);
-
-    return 0;
-}
-            
+          
+        }while(opcao != 0);
         
     
+    free(mapa);
+    free(ataques);
+    printf("Memória liberada com sucesso!\n");
 
-
+    return 0;
+     
+}
